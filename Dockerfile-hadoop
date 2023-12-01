@@ -60,7 +60,7 @@ COPY conf/yarn-site.xml $HADOOP_CONF_DIR/yarn-site.xml
 # SPARK
 # --------------------------------------------------------
 
-ENV SPARK_VERSION spark-3.3.2
+ENV SPARK_VERSION spark-3.3.3
 ENV SPARK_URL https://downloads.apache.org/spark/${SPARK_VERSION}/${SPARK_VERSION}-bin-hadoop3.tgz
 ENV SPARK_HOME=/opt/$SPARK_VERSION
 ENV PATH $SPARK_HOME/bin:$PATH
@@ -71,6 +71,7 @@ ENV PYTHONHASHSEED=1
 RUN set -x \
     && curl -fSL "${SPARK_URL}" -o /tmp/spark.tar.gz \
     && tar -xvzf /tmp/spark.tar.gz -C /opt/ \
+    && mv /opt/${SPARK_VERSION}-bin-hadoop3 /opt/${SPARK_VERSION} \
     && rm /tmp/spark.tar.gz*
 
 ADD conf/core-site.xml $SPARK_HOME/conf
@@ -113,6 +114,7 @@ RUN apt-get update && add-apt-repository ppa:deadsnakes/ppa \
          lsb-release \
          xdg-utils \
          wget \
+         --fix-missing \
   && apt-get autoremove -yqq --purge \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
